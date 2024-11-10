@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { X, Send, MessageCircle } from 'lucide-react'
 import TurndownService from 'turndown'
+import type { ChatHistoryItem } from '@/types/chat'
 const logoUrl = chrome.runtime.getURL('icons/logo.svg')
 
 interface Message {
@@ -109,6 +110,16 @@ export default function ChatPopup() {
       setMessages([...messages, newMessage])
       setInputMessage('')
 
+      // Create history item
+      const historyItem: ChatHistoryItem = {
+        id: crypto.randomUUID(),
+        pageUrl: window.location.href,
+        timestamp: Date.now(),
+        userMessage: fullMessage,
+        aiResponse: '', // Will be filled after response
+        isFirstMessage,
+      }
+
       // Send message to background script
       chrome.runtime.sendMessage(
         {
@@ -127,6 +138,17 @@ export default function ChatPopup() {
             setMessages((prevMessages) => [...prevMessages, errorResponse])
             return
           }
+
+          // Update history item with AI response
+          historyItem.aiResponse = response.reply
+
+          // Store in chrome storage
+          chrome.storage.local.get(['chatHistory'], (result) => {
+            const history: ChatHistoryItem[] = result.chatHistory || []
+            chrome.storage.local.set({
+              chatHistory: [...history, historyItem],
+            })
+          })
 
           const adminResponse: Message = {
             id: messages.length + 2,

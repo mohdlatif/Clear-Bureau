@@ -9,74 +9,74 @@
     "file": "assets/chunk-B5Qt9EMX.js",
     "name": "modulepreload-polyfill"
   },
-  "_chunk-BtzA3m8f.js": {
-    "file": "assets/chunk-BtzA3m8f.js",
+  "_chunk-BUXyNiFG.js": {
+    "file": "assets/chunk-BUXyNiFG.js",
     "name": "client"
   },
   "devtools.html": {
-    "file": "assets/chunk-CfssOZd7.js",
+    "file": "assets/chunk-DfPdi_d7.js",
     "name": "devtools.html",
     "src": "devtools.html",
     "isEntry": true,
     "imports": [
       "_chunk-B5Qt9EMX.js",
-      "_chunk-BtzA3m8f.js"
+      "_chunk-BUXyNiFG.js"
     ],
     "css": [
       "assets/devtools-DMHERPtB.css"
     ]
   },
   "index.tsx-loader.js": {
-    "file": "assets/index.tsx-loader-B7EuaElu.js",
+    "file": "assets/index.tsx-loader-CXxeD5Nw.js",
     "src": "index.tsx-loader.js"
   },
   "newtab.html": {
-    "file": "assets/chunk-IBX7Gqs5.js",
+    "file": "assets/chunk-CxDszrEz.js",
     "name": "newtab.html",
     "src": "newtab.html",
     "isEntry": true,
     "imports": [
       "_chunk-B5Qt9EMX.js",
-      "_chunk-BtzA3m8f.js"
+      "_chunk-BUXyNiFG.js"
     ],
     "css": [
-      "assets/newtab-WM1_HfSW.css"
+      "assets/newtab-CCcYNUxs.css"
     ]
   },
   "options.html": {
-    "file": "assets/chunk-CpiDHcZb.js",
+    "file": "assets/chunk-CPgnerrQ.js",
     "name": "options.html",
     "src": "options.html",
     "isEntry": true,
     "imports": [
       "_chunk-B5Qt9EMX.js",
-      "_chunk-BtzA3m8f.js"
+      "_chunk-BUXyNiFG.js"
     ],
     "css": [
-      "assets/devtools-DMHERPtB.css"
+      "assets/options-DPHxHfGf.css"
     ]
   },
   "popup.html": {
-    "file": "assets/chunk-Dn1oqWRa.js",
+    "file": "assets/chunk-C2c8H80C.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
     "imports": [
       "_chunk-B5Qt9EMX.js",
-      "_chunk-BtzA3m8f.js"
+      "_chunk-BUXyNiFG.js"
     ],
     "css": [
-      "assets/popup-DA2nfM7A.css"
+      "assets/popup-C0qDzFm7.css"
     ]
   },
   "sidepanel.html": {
-    "file": "assets/chunk-8Adnj5i_.js",
+    "file": "assets/chunk-DV2fYURL.js",
     "name": "sidepanel.html",
     "src": "sidepanel.html",
     "isEntry": true,
     "imports": [
       "_chunk-B5Qt9EMX.js",
-      "_chunk-BtzA3m8f.js"
+      "_chunk-BUXyNiFG.js"
     ],
     "css": [
       "assets/sidepanel-M1JTAGBV.css"
@@ -89,15 +89,15 @@
     "isEntry": true
   },
   "src/contentScript/index.tsx": {
-    "file": "assets/chunk-DLpeN1jb.js",
+    "file": "assets/chunk-BPBy-54E.js",
     "name": "index.tsx",
     "src": "src/contentScript/index.tsx",
     "isEntry": true,
     "imports": [
-      "_chunk-BtzA3m8f.js"
+      "_chunk-BUXyNiFG.js"
     ],
     "css": [
-      "assets/index-pJSodtRQ.css"
+      "assets/index-UDfIs6KH.css"
     ]
   }
 }
