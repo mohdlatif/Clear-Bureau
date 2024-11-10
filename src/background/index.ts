@@ -1,5 +1,7 @@
 import Together from 'together-ai'
 
+// const { settings } = await chrome.storage.sync.get(['settings'])
+
 const together = new Together({
   apiKey: '8916aa5dd5a189dbf006f0e0fb4dd1874c3824b05c301cd13af93e02c8693622',
 })
@@ -32,9 +34,13 @@ You can access the following tools to assist you:
 Please use these tools to provide the best possible assistance to users.`
 async function handleChatMessage(text: string, tabId?: number, messageHistory?: any[]) {
   try {
+    // Get the tone preference from storage
+    const { tone } = await chrome.storage.local.get(['tone'])
+    const toneInstruction = tone ? `\n\nPlease respond using a ${tone} tone.` : ''
+
     const response = await together.chat.completions.create({
       messages: [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: systemPrompt + toneInstruction },
         ...(messageHistory || []),
         { role: 'user', content: text },
       ],

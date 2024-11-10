@@ -1,6 +1,6 @@
 {
   "name": "Clear Bureau",
-  "description": "Simplify your interactions with government services! This extension offers a friendly AI assistant that helps you understand complex processes, find the information you need, and complete tasks efficiently, all in your preferred language.",
+  "description": "Simplify your interactions with government services!",
   "version": "1.0.0",
   "manifest_version": 3,
   "icons": {

@@ -1,6 +1,6 @@
 {
   "../../../../@crx/manifest": {
-    "file": "assets/chunk-tWO07n1I.js",
+    "file": "assets/chunk-By-nyPRv.js",
     "name": "crx-manifest.js",
     "src": "../../../../@crx/manifest",
     "isEntry": true
@@ -44,7 +44,7 @@
     ]
   },
   "src/background/index.ts": {
-    "file": "assets/chunk-BCbXZ8wt.js",
+    "file": "assets/chunk-TdnemFor.js",
     "name": "index.ts",
     "src": "src/background/index.ts",
     "isEntry": true
