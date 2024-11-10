@@ -72,15 +72,16 @@ export default function ChatPopup() {
       setMessages([...messages, newMessage])
       setInputMessage('')
 
-      // Simulate admin response after a short delay
-      setTimeout(() => {
+      // Send message to background script
+      chrome.runtime.sendMessage({ type: 'CHAT_MESSAGE', text: fullMessage }, (response) => {
+        // Add the response from background script
         const adminResponse: Message = {
           id: messages.length + 2,
-          text: 'Thank you for your message. An admin will get back to you shortly.',
+          text: response.reply,
           sender: 'admin',
         }
         setMessages((prevMessages) => [...prevMessages, adminResponse])
-      }, 1000)
+      })
     }
   }
 

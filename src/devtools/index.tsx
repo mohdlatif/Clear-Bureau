@@ -9,6 +9,6 @@ ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
   </React.StrictMode>,
 )
 
-chrome.devtools.panels.create('CodeBridge', '', '../../devtools.html', function () {
+chrome.devtools.panels.create('clearbureau', '', '../../devtools.html', function () {
   console.log('devtools panel create')
 })

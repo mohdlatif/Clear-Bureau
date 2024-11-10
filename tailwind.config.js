@@ -2,7 +2,7 @@
 export default {
   darkMode: ['class'],
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
-  // important: "#codebridge-root",
+  // important: "#clearbureau-root",
   theme: {
     container: {
       center: 'true',

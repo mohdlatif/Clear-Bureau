@@ -23,7 +23,7 @@ export const NewTab = () => {
   }, [])
 
   return (
-    <section id="codebridge-root">
+    <section id="clearbureau-root">
       <span className="text-red-500 font-bold">New Tab Page</span>
       <h1>{time}</h1>
     </section>

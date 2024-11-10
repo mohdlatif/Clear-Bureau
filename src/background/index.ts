@@ -1,7 +1,8 @@
-console.log('background is running')
-
-chrome.runtime.onMessage.addListener((request) => {
-  if (request.type === 'COUNT') {
-    console.log('background has received a message from popup, and count is ', request?.count)
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'CHAT_MESSAGE') {
+    // Process the message
+    const processedMessage = message.text + ' haha'
+    sendResponse({ reply: processedMessage })
   }
+  return true // Keep the message channel open for async response
 })
