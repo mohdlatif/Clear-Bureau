@@ -30,11 +30,28 @@ export default function ChatPopup() {
       // Clone body content
       const tempDiv = document.body.cloneNode(true) as HTMLElement
 
-      // Remove unwanted elements including the chat interface
+      // Get current domain
+      const currentDomain = window.location.origin
+
+      // Remove unwanted elements
       const elementsToRemove = tempDiv.querySelectorAll(
         'header, footer, [role="banner"], [role="contentinfo"], nav, script, style, link, meta, noscript, #crx-chat-root',
       )
       elementsToRemove.forEach((el) => el.remove())
+
+      // Convert relative URLs to absolute URLs
+      const links = tempDiv.querySelectorAll('a')
+      links.forEach((link) => {
+        const href = link.getAttribute('href')
+        if (href && !href.startsWith('http') && !href.startsWith('mailto:')) {
+          // Handle different types of relative URLs
+          if (href.startsWith('/')) {
+            link.setAttribute('href', `${currentDomain}${href}`)
+          } else {
+            link.setAttribute('href', `${currentDomain}/${href}`)
+          }
+        }
+      })
 
       // Convert to Markdown
       const turndownService = new TurndownService({
@@ -43,6 +60,17 @@ export default function ChatPopup() {
         emDelimiter: '*',
         bulletListMarker: '-',
         hr: '---',
+      })
+
+      // Add custom rule for links
+      turndownService.addRule('absoluteLinks', {
+        filter: ['a'],
+        replacement: function (content, node) {
+          const element = node as HTMLAnchorElement
+          const href = element.getAttribute('href') || ''
+          const title = element.title ? ` "${element.title}"` : ''
+          return `[${content}](${href}${title})`
+        },
       })
 
       // Customize Turndown rules if needed
