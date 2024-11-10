@@ -2,7 +2,7 @@
 
 **Clear Bureau** is a Chrome extension that simplifies navigating government websites and accessing public services. It provides translations, explanations, and step-by-step guidance in multiple languages, making essential services like tax filing and benefits accessible to everyone.
 
-[![Clear Bureau Demo](https://lablab.ai/event/llama-impact-hackathon/code-crusiade)]
+[[Clear Bureau Demo](https://lablab.ai/event/llama-impact-hackathon/code-crusiade)]
 
 ## Key Features
 
