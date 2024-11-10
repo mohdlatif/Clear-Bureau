@@ -10,6 +10,7 @@ interface Message {
   id: number
   text: string
   sender: 'user' | 'admin'
+  isStreaming?: boolean
 }
 
 export default function ChatPopup() {
@@ -27,6 +28,69 @@ export default function ChatPopup() {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
     }
   }, [messages])
+
+  useEffect(() => {
+    // Add message listener for streaming responses
+    const messageListener = (message: any) => {
+      if (message.type === 'CHAT_RESPONSE_CHUNK') {
+        if (!message.isComplete) {
+          // Add new message if it's the first chunk
+          setMessages((prevMessages) => {
+            const lastMessage = prevMessages[prevMessages.length - 1]
+            if (lastMessage.sender === 'admin' && lastMessage.isStreaming) {
+              // Update existing streaming message
+              return prevMessages.map((msg) =>
+                msg.id === lastMessage.id ? { ...msg, text: msg.text + message.content } : msg,
+              )
+            } else {
+              // Create new streaming message
+              return [
+                ...prevMessages,
+                {
+                  id: prevMessages.length + 1,
+                  text: message.content,
+                  sender: 'admin',
+                  isStreaming: true,
+                },
+              ]
+            }
+          })
+        } else {
+          // Final message - update history
+          setIsLoading(false)
+          const historyItem: ChatHistoryItem = {
+            id: crypto.randomUUID(),
+            pageUrl: window.location.href,
+            timestamp: Date.now(),
+            userMessage: inputMessage,
+            aiResponse: message.fullResponse,
+            isFirstMessage: false,
+          }
+
+          // Store in chrome storage
+          chrome.storage.local.get(['chatHistory'], (result) => {
+            const history: ChatHistoryItem[] = result.chatHistory || []
+            chrome.storage.local.set({
+              chatHistory: [...history, historyItem],
+            })
+          })
+        }
+      } else if (message.type === 'CHAT_ERROR') {
+        setIsLoading(false)
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            text: message.error,
+            sender: 'admin',
+          },
+        ])
+      }
+    }
+
+    chrome.runtime.onMessage.addListener(messageListener)
+    return () => chrome.runtime.onMessage.removeListener(messageListener)
+  }, [])
 
   const handleSendMessage = () => {
     if (inputMessage.trim() !== '') {
@@ -104,60 +168,18 @@ export default function ChatPopup() {
 
       const newMessage: Message = {
         id: messages.length + 1,
-        text: isFirstMessage ? fullMessage : inputMessage, // Show full content for first message, only input for others
+        text: inputMessage,
         sender: 'user',
       }
       setMessages([...messages, newMessage])
       setInputMessage('')
 
-      // Create history item
-      const historyItem: ChatHistoryItem = {
-        id: crypto.randomUUID(),
-        pageUrl: window.location.href,
-        timestamp: Date.now(),
-        userMessage: fullMessage,
-        aiResponse: '', // Will be filled after response
-        isFirstMessage,
-      }
-
       // Send message to background script
-      chrome.runtime.sendMessage(
-        {
-          type: 'CHAT_MESSAGE',
-          text: fullMessage,
-          isFirstMessage,
-        },
-        (response) => {
-          setIsLoading(false)
-          if (chrome.runtime.lastError) {
-            const errorResponse: Message = {
-              id: messages.length + 2,
-              text: 'Sorry, something went wrong. Please try again.',
-              sender: 'admin',
-            }
-            setMessages((prevMessages) => [...prevMessages, errorResponse])
-            return
-          }
-
-          // Update history item with AI response
-          historyItem.aiResponse = response.reply
-
-          // Store in chrome storage
-          chrome.storage.local.get(['chatHistory'], (result) => {
-            const history: ChatHistoryItem[] = result.chatHistory || []
-            chrome.storage.local.set({
-              chatHistory: [...history, historyItem],
-            })
-          })
-
-          const adminResponse: Message = {
-            id: messages.length + 2,
-            text: response.reply,
-            sender: 'admin',
-          }
-          setMessages((prevMessages) => [...prevMessages, adminResponse])
-        },
-      )
+      chrome.runtime.sendMessage({
+        type: 'CHAT_MESSAGE',
+        text: fullMessage,
+        isFirstMessage,
+      })
     }
   }
 

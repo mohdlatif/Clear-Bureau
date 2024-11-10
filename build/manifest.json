@@ -22,7 +22,7 @@
   "content_scripts": [
     {
       "js": [
-        "assets/index.tsx-loader-LK1oyF4n.js"
+        "assets/index.tsx-loader-CZkm_6pa.js"
       ],
       "matches": [
         "<all_urls>"
@@ -43,7 +43,7 @@
       "resources": [
         "icons/*",
         "assets/chunk-BUXyNiFG.js",
-        "assets/chunk-tz8MNWiL.js"
+        "assets/chunk-C003wFae.js"
       ],
       "use_dynamic_url": false
     }
