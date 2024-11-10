@@ -1,6 +1,6 @@
 {
   "../../../../@crx/manifest": {
-    "file": "assets/chunk-u7V1z2YV.js",
+    "file": "assets/chunk-tWO07n1I.js",
     "name": "crx-manifest.js",
     "src": "../../../../@crx/manifest",
     "isEntry": true
@@ -9,95 +9,56 @@
     "file": "assets/chunk-B5Qt9EMX.js",
     "name": "modulepreload-polyfill"
   },
-  "_chunk-BUXyNiFG.js": {
-    "file": "assets/chunk-BUXyNiFG.js",
+  "_chunk-BzbYcfmb.js": {
+    "file": "assets/chunk-BzbYcfmb.js",
     "name": "client"
   },
-  "devtools.html": {
-    "file": "assets/chunk-DfPdi_d7.js",
-    "name": "devtools.html",
-    "src": "devtools.html",
-    "isEntry": true,
-    "imports": [
-      "_chunk-B5Qt9EMX.js",
-      "_chunk-BUXyNiFG.js"
-    ],
-    "css": [
-      "assets/devtools-DMHERPtB.css"
-    ]
-  },
   "index.tsx-loader.js": {
-    "file": "assets/index.tsx-loader-CZkm_6pa.js",
+    "file": "assets/index.tsx-loader-C4EmTQ19.js",
     "src": "index.tsx-loader.js"
   },
-  "newtab.html": {
-    "file": "assets/chunk-BHSCUq7V.js",
-    "name": "newtab.html",
-    "src": "newtab.html",
-    "isEntry": true,
-    "imports": [
-      "_chunk-B5Qt9EMX.js",
-      "_chunk-BUXyNiFG.js"
-    ],
-    "css": [
-      "assets/newtab-DTtC3DTT.css"
-    ]
-  },
   "options.html": {
-    "file": "assets/chunk-KHQ_nflJ.js",
+    "file": "assets/chunk-Cj003oWS.js",
     "name": "options.html",
     "src": "options.html",
     "isEntry": true,
     "imports": [
       "_chunk-B5Qt9EMX.js",
-      "_chunk-BUXyNiFG.js"
+      "_chunk-BzbYcfmb.js"
     ],
     "css": [
-      "assets/options-doFb3EHf.css"
+      "assets/options-CQK7zYUS.css"
     ]
   },
   "popup.html": {
-    "file": "assets/chunk-mkEIT4Co.js",
+    "file": "assets/chunk-BKtEfaDu.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
     "imports": [
       "_chunk-B5Qt9EMX.js",
-      "_chunk-BUXyNiFG.js"
+      "_chunk-BzbYcfmb.js"
     ],
     "css": [
-      "assets/popup-CS8_AJC1.css"
-    ]
-  },
-  "sidepanel.html": {
-    "file": "assets/chunk-DV2fYURL.js",
-    "name": "sidepanel.html",
-    "src": "sidepanel.html",
-    "isEntry": true,
-    "imports": [
-      "_chunk-B5Qt9EMX.js",
-      "_chunk-BUXyNiFG.js"
-    ],
-    "css": [
-      "assets/sidepanel-M1JTAGBV.css"
+      "assets/popup-BPOVy9_K.css"
     ]
   },
   "src/background/index.ts": {
-    "file": "assets/chunk-DC7UPPWk.js",
+    "file": "assets/chunk-BCbXZ8wt.js",
     "name": "index.ts",
     "src": "src/background/index.ts",
     "isEntry": true
   },
   "src/contentScript/index.tsx": {
-    "file": "assets/chunk-C003wFae.js",
+    "file": "assets/chunk-jYboFpmJ.js",
     "name": "index.tsx",
     "src": "src/contentScript/index.tsx",
     "isEntry": true,
     "imports": [
-      "_chunk-BUXyNiFG.js"
+      "_chunk-BzbYcfmb.js"
     ],
     "css": [
-      "assets/index-DzNQlFbV.css"
+      "assets/index-CkRI_SKP.css"
     ]
   }
 }

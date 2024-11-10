@@ -20,7 +20,7 @@ export default defineManifest({
     default_icon: 'icons/icon48.png',
   },
   options_page: 'options.html',
-  devtools_page: 'devtools.html',
+  // devtools_page: 'devtools.html',
   background: {
     service_worker: 'src/background/index.ts',
     type: 'module',
@@ -31,9 +31,9 @@ export default defineManifest({
       js: ['src/contentScript/index.tsx'],
     },
   ],
-  side_panel: {
-    default_path: 'sidepanel.html',
-  },
+  // side_panel: {
+  //   default_path: 'sidepanel.html',
+  // },
   web_accessible_resources: [
     {
       resources: ['icons/*'],
@@ -41,7 +41,7 @@ export default defineManifest({
     },
   ],
   permissions: ['sidePanel', 'storage', 'activeTab'],
-  chrome_url_overrides: {
-    newtab: 'newtab.html',
-  },
+  // chrome_url_overrides: {
+  //   newtab: 'newtab.html',
+  // },
 })

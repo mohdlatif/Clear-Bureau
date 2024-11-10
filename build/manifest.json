@@ -1,6 +1,6 @@
 {
   "name": "Clear Bureau",
-  "description": "Bridge language barriers in technical documentation",
+  "description": "Simplify your interactions with government services! This extension offers a friendly AI assistant that helps you understand complex processes, find the information you need, and complete tasks efficiently, all in your preferred language.",
   "version": "1.0.0",
   "manifest_version": 3,
   "icons": {
@@ -14,7 +14,6 @@
     "default_icon": "icons/icon48.png"
   },
   "options_page": "options.html",
-  "devtools_page": "devtools.html",
   "background": {
     "service_worker": "service-worker-loader.js",
     "type": "module"
@@ -22,19 +21,16 @@
   "content_scripts": [
     {
       "js": [
-        "assets/index.tsx-loader-CZkm_6pa.js"
+        "assets/index.tsx-loader-C4EmTQ19.js"
       ],
       "matches": [
         "<all_urls>"
       ],
       "css": [
-        "assets/index-DzNQlFbV.css"
+        "assets/index-CkRI_SKP.css"
       ]
     }
   ],
-  "side_panel": {
-    "default_path": "sidepanel.html"
-  },
   "web_accessible_resources": [
     {
       "matches": [
@@ -42,8 +38,8 @@
       ],
       "resources": [
         "icons/*",
-        "assets/chunk-BUXyNiFG.js",
-        "assets/chunk-C003wFae.js"
+        "assets/chunk-BzbYcfmb.js",
+        "assets/chunk-jYboFpmJ.js"
       ],
       "use_dynamic_url": false
     }
@@ -52,8 +48,5 @@
     "sidePanel",
     "storage",
     "activeTab"
-  ],
-  "chrome_url_overrides": {
-    "newtab": "newtab.html"
-  }
+  ]
 }

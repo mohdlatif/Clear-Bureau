@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { X, Send, MessageCircle } from 'lucide-react'
+import { X, Send, MessageCircle, Volume2, VolumeX } from 'lucide-react'
 import TurndownService from 'turndown'
 import type { ChatHistoryItem } from '@/types/chat'
 const logoUrl = chrome.runtime.getURL('icons/logo.svg')
@@ -22,6 +22,9 @@ export default function ChatPopup() {
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isFirstMessage, setIsFirstMessage] = useState(true)
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const speechSynthesis = window.speechSynthesis
+  const recognition = new (window as any).webkitSpeechRecognition()
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -96,75 +99,18 @@ export default function ChatPopup() {
     if (inputMessage.trim() !== '') {
       setIsLoading(true)
 
-      let fullMessage: string
+      // Convert messages to alternating user/assistant format
+      const messageHistory = messages.map((msg) => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.text,
+      }))
 
-      if (isFirstMessage) {
-        // First message - include markdown content
-        const tempDiv = document.body.cloneNode(true) as HTMLElement
-        const currentDomain = window.location.origin
-
-        // Remove unwanted elements
-        const elementsToRemove = tempDiv.querySelectorAll(
-          'header, footer, [role="banner"], [role="contentinfo"], nav, script, style, link, meta, noscript, #crx-chat-root',
-        )
-        elementsToRemove.forEach((el) => el.remove())
-
-        // Convert relative URLs to absolute URLs
-        const links = tempDiv.querySelectorAll('a')
-        links.forEach((link) => {
-          const href = link.getAttribute('href')
-          if (href && !href.startsWith('http') && !href.startsWith('mailto:')) {
-            // Handle different types of relative URLs
-            if (href.startsWith('/')) {
-              link.setAttribute('href', `${currentDomain}${href}`)
-            } else {
-              link.setAttribute('href', `${currentDomain}/${href}`)
-            }
-          }
-        })
-
-        // Convert to Markdown
-        const turndownService = new TurndownService({
-          headingStyle: 'atx',
-          codeBlockStyle: 'fenced',
-          emDelimiter: '*',
-          bulletListMarker: '-',
-          hr: '---',
-        })
-
-        // Add custom rule for links
-        turndownService.addRule('absoluteLinks', {
-          filter: ['a'],
-          replacement: function (content, node) {
-            const element = node as HTMLAnchorElement
-            const href = element.getAttribute('href') || ''
-            const title = element.title ? ` "${element.title}"` : ''
-            return `[${content}](${href}${title})`
-          },
-        })
-
-        // Customize Turndown rules if needed
-        turndownService.addRule('removeEmptyParagraphs', {
-          filter: ['p'],
-          replacement: function (content: string) {
-            if (content.trim() === '') return ''
-            return '\n\n' + content + '\n\n'
-          },
-        })
-
-        // Convert to markdown
-        const markdown = turndownService
-          .turndown(tempDiv)
-          .replace(/\n{3,}/g, '\n\n') // Remove extra line breaks
-          .trim()
-        // .slice(0, 1500) + '...'
-
-        fullMessage = `Page Content (Markdown):\n${markdown}\n\nUser Message:\n${inputMessage}`
-        setIsFirstMessage(false) // Mark first message as done
-      } else {
-        // Subsequent messages - only include user input
-        fullMessage = inputMessage
-      }
+      // Send message to background script
+      chrome.runtime.sendMessage({
+        type: 'CHAT_MESSAGE',
+        text: inputMessage,
+        messageHistory: messageHistory, // This will now contain the alternating pattern
+      })
 
       const newMessage: Message = {
         id: messages.length + 1,
@@ -173,14 +119,20 @@ export default function ChatPopup() {
       }
       setMessages([...messages, newMessage])
       setInputMessage('')
-
-      // Send message to background script
-      chrome.runtime.sendMessage({
-        type: 'CHAT_MESSAGE',
-        text: fullMessage,
-        isFirstMessage,
-      })
     }
+  }
+
+  const toggleSpeech = (text: string) => {
+    if (isSpeaking) {
+      speechSynthesis.cancel()
+      setIsSpeaking(false)
+      return
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.onend = () => setIsSpeaking(false)
+    speechSynthesis.speak(utterance)
+    setIsSpeaking(true)
   }
 
   return (
@@ -200,7 +152,10 @@ export default function ChatPopup() {
             <div className="flex items-center justify-between mb-2">
               <div className="flex gap-x-4 items-center">
                 <img src={logoUrl} alt="Chat Icon" className="w-10 h-10 rounded-full" />
-                <h3 className="font-semibold">Chat with us</h3>
+                <div className="flex flex-col">
+                  <h3 className="font-semibold">Clear Bureau</h3>
+                  <p className="text-gray-400 text-[11px]">Government Services Made Easy</p>
+                </div>
               </div>
               <Button
                 variant="ghost"
@@ -221,14 +176,30 @@ export default function ChatPopup() {
                 key={message.id}
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div
-                  className={`rounded-lg p-2 max-w-[80%] whitespace-pre-wrap break-words ${
-                    message.sender === 'user'
-                      ? 'bg-[#ad1457] text-white'
-                      : 'bg-[#e8eaf6] text-[#1a237e]'
-                  }`}
-                >
-                  {message.text}
+                <div className="flex items-start gap-2">
+                  <div
+                    className={`rounded-lg p-2 max-w-[80%] whitespace-pre-wrap break-words ${
+                      message.sender === 'user'
+                        ? 'bg-[#ad1457] text-white'
+                        : 'bg-[#e8eaf6] text-[#1a237e]'
+                    }`}
+                  >
+                    {message.text}
+                  </div>
+                  {message.sender === 'admin' && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => toggleSpeech(message.text)}
+                    >
+                      {isSpeaking ? (
+                        <VolumeX className="h-4 w-4" />
+                      ) : (
+                        <Volume2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}

@@ -6,11 +6,8 @@ const together = new Together({
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'CHAT_MESSAGE') {
-    // Immediately respond to keep connection alive
     sendResponse({ status: 'processing' })
-
-    // Process the message
-    handleChatMessage(message.text, sender.tab?.id)
+    handleChatMessage(message.text, sender.tab?.id, message.messageHistory)
   }
   return true
 })
@@ -33,11 +30,12 @@ You can access the following tools to assist you:
 * The ability to extract information from web pages.
 
 Please use these tools to provide the best possible assistance to users.`
-async function handleChatMessage(text: string, tabId?: number) {
+async function handleChatMessage(text: string, tabId?: number, messageHistory?: any[]) {
   try {
     const response = await together.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
+        ...(messageHistory || []),
         { role: 'user', content: text },
       ],
       model: 'meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo',
