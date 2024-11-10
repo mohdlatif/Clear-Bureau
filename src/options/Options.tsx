@@ -118,33 +118,41 @@ export const Options = () => {
             </div>
 
             <div className="space-y-6">
-              {selectedChats.map((chat) => (
-                <div key={chat.id} className="border-b pb-6">
-                  <div className="text-sm text-gray-500 mb-3">{formatDate(chat.timestamp)}</div>
+              {selectedChats.map((chat) => {
+                console.log('Chat object:', chat)
+                return (
+                  <div key={chat.id} className="border-b pb-6">
+                    <div className="text-sm text-gray-500 mb-3">{formatDate(chat.timestamp)}</div>
 
-                  <div className="space-y-4">
-                    <div className="bg-white rounded border p-4">
-                      <div className="text-sm font-medium text-gray-500 mb-2">User Message</div>
-                      <div className="prose max-w-none">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]} className="markdown-content">
-                          {chat.isFirstMessage
-                            ? chat.userMessage.split('User Message:')[1]
-                            : chat.userMessage}
-                        </ReactMarkdown>
+                    <div className="space-y-4">
+                      <div className="bg-white rounded border p-4">
+                        <div className="text-sm font-medium text-gray-500 mb-2">User Message</div>
+                        <div className="prose max-w-none">
+                          {chat.userMessage ? (
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} className="markdown-content">
+                              {chat.userMessage}
+                            </ReactMarkdown>
+                          ) : (
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} className="markdown-content">
+                              {chat.aiResponse.match(/Your first question was: "(.*?)"/)?.[1] ||
+                                'Message not available'}
+                            </ReactMarkdown>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="bg-gray-50 rounded border p-4">
-                      <div className="text-sm font-medium text-gray-500 mb-2">AI Response</div>
-                      <div className="prose max-w-none">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]} className="markdown-content">
-                          {chat.aiResponse}
-                        </ReactMarkdown>
+                      <div className="bg-gray-50 rounded border p-4">
+                        <div className="text-sm font-medium text-gray-500 mb-2">AI Response</div>
+                        <div className="prose max-w-none">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} className="markdown-content">
+                            {chat.aiResponse}
+                          </ReactMarkdown>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         ) : (
