@@ -1,11 +1,13 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'CHAT_MESSAGE') {
-    // Process the message
     setTimeout(() => {
-      // Process the message
-      const processedMessage = message.text + ' haha'
+      // Different processing based on message type
+      const processedMessage = message.isFirstMessage
+        ? `Processed first message with page content: ${message.text} haha`
+        : `Processed follow-up message: ${message.text} haha`
+
       sendResponse({ reply: processedMessage })
-    }, 2000) // 2 second delay
+    }, 2000)
   }
-  return true // Keep the message channel open for async response
+  return true
 })

@@ -1,0 +1,59 @@
+{
+  "name": "Clear Bureau",
+  "description": "Bridge language barriers in technical documentation",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon48.png"
+  },
+  "options_page": "options.html",
+  "devtools_page": "devtools.html",
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "assets/index.tsx-loader-B7EuaElu.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "css": [
+        "assets/index-pJSodtRQ.css"
+      ]
+    }
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "icons/*",
+        "assets/chunk-BtzA3m8f.js",
+        "assets/chunk-DLpeN1jb.js"
+      ],
+      "use_dynamic_url": false
+    }
+  ],
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "activeTab"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  }
+}

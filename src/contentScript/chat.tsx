@@ -19,6 +19,7 @@ export default function ChatPopup() {
   const [inputMessage, setInputMessage] = useState('')
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isFirstMessage, setIsFirstMessage] = useState(true)
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -30,99 +31,111 @@ export default function ChatPopup() {
     if (inputMessage.trim() !== '') {
       setIsLoading(true)
 
-      // Clone body content
-      const tempDiv = document.body.cloneNode(true) as HTMLElement
+      let fullMessage: string
 
-      // Get current domain
-      const currentDomain = window.location.origin
+      if (isFirstMessage) {
+        // First message - include markdown content
+        const tempDiv = document.body.cloneNode(true) as HTMLElement
+        const currentDomain = window.location.origin
 
-      // Remove unwanted elements
-      const elementsToRemove = tempDiv.querySelectorAll(
-        'header, footer, [role="banner"], [role="contentinfo"], nav, script, style, link, meta, noscript, #crx-chat-root',
-      )
-      elementsToRemove.forEach((el) => el.remove())
+        // Remove unwanted elements
+        const elementsToRemove = tempDiv.querySelectorAll(
+          'header, footer, [role="banner"], [role="contentinfo"], nav, script, style, link, meta, noscript, #crx-chat-root',
+        )
+        elementsToRemove.forEach((el) => el.remove())
 
-      // Convert relative URLs to absolute URLs
-      const links = tempDiv.querySelectorAll('a')
-      links.forEach((link) => {
-        const href = link.getAttribute('href')
-        if (href && !href.startsWith('http') && !href.startsWith('mailto:')) {
-          // Handle different types of relative URLs
-          if (href.startsWith('/')) {
-            link.setAttribute('href', `${currentDomain}${href}`)
-          } else {
-            link.setAttribute('href', `${currentDomain}/${href}`)
+        // Convert relative URLs to absolute URLs
+        const links = tempDiv.querySelectorAll('a')
+        links.forEach((link) => {
+          const href = link.getAttribute('href')
+          if (href && !href.startsWith('http') && !href.startsWith('mailto:')) {
+            // Handle different types of relative URLs
+            if (href.startsWith('/')) {
+              link.setAttribute('href', `${currentDomain}${href}`)
+            } else {
+              link.setAttribute('href', `${currentDomain}/${href}`)
+            }
           }
-        }
-      })
+        })
 
-      // Convert to Markdown
-      const turndownService = new TurndownService({
-        headingStyle: 'atx',
-        codeBlockStyle: 'fenced',
-        emDelimiter: '*',
-        bulletListMarker: '-',
-        hr: '---',
-      })
+        // Convert to Markdown
+        const turndownService = new TurndownService({
+          headingStyle: 'atx',
+          codeBlockStyle: 'fenced',
+          emDelimiter: '*',
+          bulletListMarker: '-',
+          hr: '---',
+        })
 
-      // Add custom rule for links
-      turndownService.addRule('absoluteLinks', {
-        filter: ['a'],
-        replacement: function (content, node) {
-          const element = node as HTMLAnchorElement
-          const href = element.getAttribute('href') || ''
-          const title = element.title ? ` "${element.title}"` : ''
-          return `[${content}](${href}${title})`
-        },
-      })
+        // Add custom rule for links
+        turndownService.addRule('absoluteLinks', {
+          filter: ['a'],
+          replacement: function (content, node) {
+            const element = node as HTMLAnchorElement
+            const href = element.getAttribute('href') || ''
+            const title = element.title ? ` "${element.title}"` : ''
+            return `[${content}](${href}${title})`
+          },
+        })
 
-      // Customize Turndown rules if needed
-      turndownService.addRule('removeEmptyParagraphs', {
-        filter: ['p'],
-        replacement: function (content: string) {
-          if (content.trim() === '') return ''
-          return '\n\n' + content + '\n\n'
-        },
-      })
+        // Customize Turndown rules if needed
+        turndownService.addRule('removeEmptyParagraphs', {
+          filter: ['p'],
+          replacement: function (content: string) {
+            if (content.trim() === '') return ''
+            return '\n\n' + content + '\n\n'
+          },
+        })
 
-      // Convert to markdown
-      const markdown = turndownService
-        .turndown(tempDiv)
-        .replace(/\n{3,}/g, '\n\n') // Remove extra line breaks
-        .trim()
-      // .slice(0, 1500) + '...'
+        // Convert to markdown
+        const markdown = turndownService
+          .turndown(tempDiv)
+          .replace(/\n{3,}/g, '\n\n') // Remove extra line breaks
+          .trim()
+        // .slice(0, 1500) + '...'
 
-      // Combine page content and user message
-      const fullMessage = `Page Content (Markdown):\n${markdown}\n\nUser Message:\n${inputMessage}`
+        fullMessage = `Page Content (Markdown):\n${markdown}\n\nUser Message:\n${inputMessage}`
+        setIsFirstMessage(false) // Mark first message as done
+      } else {
+        // Subsequent messages - only include user input
+        fullMessage = inputMessage
+      }
 
       const newMessage: Message = {
         id: messages.length + 1,
-        text: fullMessage,
+        text: isFirstMessage ? fullMessage : inputMessage, // Show full content for first message, only input for others
         sender: 'user',
       }
       setMessages([...messages, newMessage])
       setInputMessage('')
 
       // Send message to background script
-      chrome.runtime.sendMessage({ type: 'CHAT_MESSAGE', text: fullMessage }, (response) => {
-        setIsLoading(false)
-        if (chrome.runtime.lastError) {
-          const errorResponse: Message = {
+      chrome.runtime.sendMessage(
+        {
+          type: 'CHAT_MESSAGE',
+          text: fullMessage,
+          isFirstMessage,
+        },
+        (response) => {
+          setIsLoading(false)
+          if (chrome.runtime.lastError) {
+            const errorResponse: Message = {
+              id: messages.length + 2,
+              text: 'Sorry, something went wrong. Please try again.',
+              sender: 'admin',
+            }
+            setMessages((prevMessages) => [...prevMessages, errorResponse])
+            return
+          }
+
+          const adminResponse: Message = {
             id: messages.length + 2,
-            text: 'Sorry, something went wrong. Please try again.',
+            text: response.reply,
             sender: 'admin',
           }
-          setMessages((prevMessages) => [...prevMessages, errorResponse])
-          return
-        }
-
-        const adminResponse: Message = {
-          id: messages.length + 2,
-          text: response.reply,
-          sender: 'admin',
-        }
-        setMessages((prevMessages) => [...prevMessages, adminResponse])
-      })
+          setMessages((prevMessages) => [...prevMessages, adminResponse])
+        },
+      )
     }
   }
 
