@@ -18,6 +18,7 @@ export default function ChatPopup() {
   ])
   const [inputMessage, setInputMessage] = useState('')
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -27,6 +28,8 @@ export default function ChatPopup() {
 
   const handleSendMessage = () => {
     if (inputMessage.trim() !== '') {
+      setIsLoading(true)
+
       // Clone body content
       const tempDiv = document.body.cloneNode(true) as HTMLElement
 
@@ -102,7 +105,17 @@ export default function ChatPopup() {
 
       // Send message to background script
       chrome.runtime.sendMessage({ type: 'CHAT_MESSAGE', text: fullMessage }, (response) => {
-        // Add the response from background script
+        setIsLoading(false)
+        if (chrome.runtime.lastError) {
+          const errorResponse: Message = {
+            id: messages.length + 2,
+            text: 'Sorry, something went wrong. Please try again.',
+            sender: 'admin',
+          }
+          setMessages((prevMessages) => [...prevMessages, errorResponse])
+          return
+        }
+
         const adminResponse: Message = {
           id: messages.length + 2,
           text: response.reply,
@@ -162,6 +175,32 @@ export default function ChatPopup() {
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-[#e8eaf6] rounded-lg p-3">
+                  <svg
+                    className="animate-spin h-5 w-5 text-[#1a237e]"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+            )}
           </div>
           <div className="p-4 border-t border-[#3949ab]">
             <form
