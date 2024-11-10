@@ -27,11 +27,11 @@
     ]
   },
   "index.tsx-loader.js": {
-    "file": "assets/index.tsx-loader-CXxeD5Nw.js",
+    "file": "assets/index.tsx-loader-LK1oyF4n.js",
     "src": "index.tsx-loader.js"
   },
   "newtab.html": {
-    "file": "assets/chunk-CxDszrEz.js",
+    "file": "assets/chunk-BHSCUq7V.js",
     "name": "newtab.html",
     "src": "newtab.html",
     "isEntry": true,
@@ -40,11 +40,11 @@
       "_chunk-BUXyNiFG.js"
     ],
     "css": [
-      "assets/newtab-CCcYNUxs.css"
+      "assets/newtab-DTtC3DTT.css"
     ]
   },
   "options.html": {
-    "file": "assets/chunk-CPgnerrQ.js",
+    "file": "assets/chunk-KHQ_nflJ.js",
     "name": "options.html",
     "src": "options.html",
     "isEntry": true,
@@ -53,11 +53,11 @@
       "_chunk-BUXyNiFG.js"
     ],
     "css": [
-      "assets/options-DPHxHfGf.css"
+      "assets/options-doFb3EHf.css"
     ]
   },
   "popup.html": {
-    "file": "assets/chunk-C2c8H80C.js",
+    "file": "assets/chunk-mkEIT4Co.js",
     "name": "popup.html",
     "src": "popup.html",
     "isEntry": true,
@@ -66,7 +66,7 @@
       "_chunk-BUXyNiFG.js"
     ],
     "css": [
-      "assets/popup-C0qDzFm7.css"
+      "assets/popup-CS8_AJC1.css"
     ]
   },
   "sidepanel.html": {
@@ -89,7 +89,7 @@
     "isEntry": true
   },
   "src/contentScript/index.tsx": {
-    "file": "assets/chunk-BPBy-54E.js",
+    "file": "assets/chunk-tz8MNWiL.js",
     "name": "index.tsx",
     "src": "src/contentScript/index.tsx",
     "isEntry": true,
@@ -97,7 +97,7 @@
       "_chunk-BUXyNiFG.js"
     ],
     "css": [
-      "assets/index-UDfIs6KH.css"
+      "assets/index-DzNQlFbV.css"
     ]
   }
 }

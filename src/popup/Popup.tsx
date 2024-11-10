@@ -6,6 +6,10 @@ interface Settings {
   apiKey: string
   apiService: 'clearBureau' | 'custom'
   apiType: 'llama' | 'openai'
+  dbConfig: {
+    type: 'clearBureau' | 'custom'
+    connectionString?: string
+  }
 }
 
 export const Popup = () => {
@@ -14,6 +18,9 @@ export const Popup = () => {
     apiKey: '',
     apiService: 'clearBureau',
     apiType: 'openai',
+    dbConfig: {
+      type: 'clearBureau',
+    },
   })
 
   // Load settings on mount
@@ -29,6 +36,19 @@ export const Popup = () => {
   useEffect(() => {
     chrome.storage.sync.set({ settings })
   }, [settings])
+
+  const handleDeleteHistory = () => {
+    if (
+      window.confirm(
+        'Are you sure you want to delete all chat history? This action cannot be undone.',
+      )
+    ) {
+      chrome.storage.local.remove(['chatHistory'], () => {
+        // Optional: Show a success message or notification
+        console.log('Chat history deleted')
+      })
+    }
+  }
 
   return (
     <main className="p-4 min-w-[300px]">
@@ -90,7 +110,63 @@ export const Popup = () => {
         )}
       </div>
 
+      {/* Database Configuration Section */}
+      <div className="mb-4">
+        <h4 className="font-medium text-lg mb-3">Database Configuration</h4>
+        <label className="font-medium block mb-2">Database Service</label>
+        <select
+          value={settings.dbConfig.type}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              dbConfig: {
+                ...settings.dbConfig,
+                type: e.target.value as 'clearBureau' | 'custom',
+              },
+            })
+          }
+          className="w-full p-2 border rounded mb-2"
+        >
+          <option value="clearBureau">Clear Bureau Database</option>
+          <option value="custom">Custom PostgreSQL</option>
+        </select>
+
+        {settings.dbConfig.type === 'custom' && (
+          <>
+            <label className="font-medium block mb-2">PostgreSQL Connection URL</label>
+            <input
+              type="password"
+              value={settings.dbConfig.connectionString || ''}
+              onChange={(e) =>
+                setSettings({
+                  ...settings,
+                  dbConfig: {
+                    ...settings.dbConfig,
+                    connectionString: e.target.value,
+                  },
+                })
+              }
+              className="w-full p-2 border rounded"
+              placeholder="postgresql://user:password@localhost:5432/dbname"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Format: postgresql://user:password@host:port/database
+            </p>
+          </>
+        )}
+      </div>
+
       <div className="text-sm text-gray-500 mt-4">Settings are automatically saved</div>
+
+      <div className="mt-8 pt-4 border-t">
+        <button
+          onClick={handleDeleteHistory}
+          className="w-full p-2 bg-red-50 text-red-600 border border-red-200 rounded hover:bg-red-100 transition-colors font-medium"
+        >
+          Delete All Chat History
+        </button>
+        <p className="text-xs text-red-500 mt-1">Warning: This action cannot be undone</p>
+      </div>
     </main>
   )
 }
