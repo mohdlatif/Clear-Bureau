@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { X, Send, MessageCircle, Volume2, VolumeX } from 'lucide-react'
+import { X, Send, MessageCircle, Volume2, VolumeX, FileText, FileSearch } from 'lucide-react'
 import TurndownService from 'turndown'
 import type { ChatHistoryItem } from '@/types/chat'
 const logoUrl = chrome.runtime.getURL('icons/logo.svg')
@@ -135,6 +135,34 @@ export default function ChatPopup() {
     setIsSpeaking(true)
   }
 
+  const handleQuickAction = async (action: 'simplify' | 'summarize') => {
+    setIsLoading(true)
+
+    const turndownService = new TurndownService()
+    const tempDiv = document.body.cloneNode(true) as HTMLElement
+    const markdown = turndownService.turndown(tempDiv.innerHTML)
+
+    const prompt =
+      action === 'simplify'
+        ? 'Please simplify this page content for easier understanding'
+        : 'Please provide a concise summary of this page content'
+
+    const newMessage: Message = {
+      id: messages.length + 1,
+      text: prompt,
+      sender: 'user',
+    }
+
+    setMessages([...messages, newMessage])
+
+    chrome.runtime.sendMessage({
+      type: 'CHAT_MESSAGE',
+      text: `Page Content:\n${markdown}\n\n${prompt}`,
+      messageHistory: [],
+      isFirstMessage: true,
+    })
+  }
+
   return (
     //independent style by just adding style={{ all: 'revert' }}
     <div className="fixed bottom-4  text-gray-700 right-4 z-[2147483647]">
@@ -171,6 +199,33 @@ export default function ChatPopup() {
             ref={chatContainerRef}
             className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[400px]"
           >
+            {messages.length === 1 && ( // Only show when there's just the initial greeting
+              <div className="flex flex-col gap-3 mb-4">
+                <div className="text-center text-sm text-gray-500 mb-2">
+                  Choose an action to begin
+                </div>
+                <div className="flex justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 border-[#1a237e] text-[#1a237e] hover:bg-[#1a237e] hover:text-white"
+                    onClick={() => handleQuickAction('simplify')}
+                    disabled={isLoading}
+                  >
+                    <FileText className="h-4 w-4" />
+                    Simplify Page
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 border-[#1a237e] text-[#1a237e] hover:bg-[#1a237e] hover:text-white"
+                    onClick={() => handleQuickAction('summarize')}
+                    disabled={isLoading}
+                  >
+                    <FileSearch className="h-4 w-4" />
+                    Get Summary
+                  </Button>
+                </div>
+              </div>
+            )}
             {messages.map((message) => (
               <div
                 key={message.id}
